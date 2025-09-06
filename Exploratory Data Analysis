@@ -1,0 +1,51 @@
+---Syntax to see the datatypes of all the columns
+SELECT*
+from BRIGHT.SHOP.SALES
+LIMIT 10;
+
+---Syntax that converts that vaue into just a date by removing the time part and  AS purchase renames the column in the output.
+SELECT to_date(transaction_date) AS purchase,
+
+---Syntax to extract the day number (1 to 31) from that date and rename the resulting column for calrity.
+DAYOFMONTH(TO_DATE(transaction_date)) AS day_of_month,
+
+---Syntax where the to_date  converts a full timestamp into just a date while extracting the Month name of the month from that date and renaming the result as name_of_month.
+MONTHNAME(TO_DATE(transaction_date)) AS name_of_month,
+
+---Syntax removes the time part from a timestamp while TO_CHAR converts the date into a string in 'YYYYMM'format and rename the result column to month_id.
+TO_CHAR(TO_DATE(transaction_date), 'YYYYMM') AS month_id,
+
+---Syntax returns the name of the day for that date and AS renames the result column as day_name.
+DAYNAME(TO_DATE(transaction_date)) AS day_name,
+
+---The Case statement helps classify the days as weekend or weekday depending on day_name and if not Sat or Sun then it is a weekday and finally renamed as day_classification.
+ Case
+   WHEN day_name NOT IN ('Sat', 'Sun') THEN 'Weekday'
+   ELSE 'Weekend'
+   END AS day_claasifications,
+
+--- Syntax to categorize the transaction time into time of day segments using time_buckets and used to analyze behavior throughout the day.
+ CASE
+   WHEN transaction_time BETWEEN '06:00:00' AND '08:59:59' THEN 'Early Morning: 6am-9am'
+   WHEN transaction_time BETWEEN '09:00:00' AND '11:59:59' THEN 'Morning: 9am-12pm'
+   WHEN transaction_time BETWEEN '12:00:00' AND '15:59:59' THEN 'Afternoon'
+   WHEN transaction_time BETWEEN '16:00:00' AND '19:59:59' THEN 'Evening'
+   ELSE 'Night: 8pm'
+   END AS time_buckets,
+
+---Syntax to count the number of sales or unique transactions
+COUNT(DISTINCT transaction_id) AS number_of_sales,
+
+---Syntax to count the number of stores
+COUNT(DISTINCT store_id) stores,  
+
+---Syntax to count the number of unique or different products
+COUNT(DISTINCT product_id) number_of_different_products,
+
+---Syntax to group all to get distinct combinations of category, detail, type and location
+ product_category,
+   product_detail,
+   product_type,
+   store_location
+   FROM bright.SHOP.SALES
+   GROUP BY ALL;
